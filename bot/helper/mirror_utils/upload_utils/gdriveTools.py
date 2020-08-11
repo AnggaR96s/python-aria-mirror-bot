@@ -21,7 +21,7 @@ from bot.helper.telegram_helper import button_builder
 from telegraph import Telegraph
 
 from bot import parent_id, DOWNLOAD_DIR, IS_TEAM_DRIVE, INDEX_URL, \
-    USE_SERVICE_ACCOUNTS, download_dict, telegra_ph, \
+    USE_SERVICE_ACCOUNTS, download_dict, telegraph_token, \
     BUTTON_THREE_NAME, BUTTON_THREE_URL, BUTTON_FOUR_NAME, BUTTON_FOUR_URL, BUTTON_FIVE_NAME, BUTTON_FIVE_URL
 from bot.helper.ext_utils.bot_utils import *
 from bot.helper.ext_utils.fs_utils import get_mime_type
@@ -467,8 +467,10 @@ class GoogleDriveHelper:
                 if nxt_page < self.num_of_path:
                     content += f'<b> | <a href="https://telegra.ph/{self.path[nxt_page]}">Next</a></b>'
                     nxt_page += 1
-            telegra_ph.edit_page(path = self.path[prev_page],
-                                 title = 'LoaderX',
+            Telegraph(access_token=telegraph_token).edit_page(path = self.path[prev_page],
+                                 title = 'GPXCloud Bot Search',
+                                 author_name='GPXCloud',
+                                 author_url='https://t.me/GengKapak',
                                  html_content=content)
         return
 
@@ -517,9 +519,16 @@ class GoogleDriveHelper:
             if msg != '':
                 self.telegraph_content.append(msg)
 
+            if len(self.telegraph_content) == 0:
+                return "No Result Found :(", None
+
             for content in self.telegraph_content :
-                self.path.append(telegra_ph.create_page(title = 'GPXCloud',
-                                                html_content=content )['path'])
+                self.path.append(Telegraph(access_token=telegraph_token).create_page(
+                                                        title = 'GPXCloud Bot Search',
+                                                        author_name='GPXCloud',
+                                                        author_url='https://t.me/GengKapak',
+                                                        html_content=content
+                                                        )['path'])
 
             self.num_of_path = len(self.path)
             if self.num_of_path > 1:
@@ -533,32 +542,3 @@ class GoogleDriveHelper:
 
         else :
             return '', ''
-
-    def drive_slist(self, fileName):
-        msg = ""
-        fileName = self.escapes(str(fileName))
-        # Create Search Query for API request.
-        query = f"'{parent_id}' in parents and (name contains '{fileName}')"
-        response = self.__service.files().list(supportsTeamDrives=True,
-                                               includeTeamDriveItems=True,
-                                               q=query,
-                                               spaces='drive',
-                                               pageSize=20,
-                                               fields='files(id, name, mimeType, size)',
-                                               orderBy='modifiedTime desc').execute()
-        for file in response.get('files', []):
-            if file.get(
-                    'mimeType') == "application/vnd.google-apps.folder":  # Detect Whether Current Entity is a Folder or File.
-                msg += f"⁍ <a href='https://drive.google.com/drive/folders/{file.get('id')}'>{file.get('name')}" \
-                       f"</a> (folder)"
-                if INDEX_URL is not None:
-                    url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}/')
-                    msg += f' | <a href="{url}"> Index URL</a>'
-            else:
-                msg += f"⁍ <a href='https://drive.google.com/uc?id={file.get('id')}" \
-                       f"&export=download'>{file.get('name')}</a> ({get_readable_file_size(int(file.get('size')))})"
-                if INDEX_URL is not None:
-                    url = requests.utils.requote_uri(f'{INDEX_URL}/{file.get("name")}')
-                    msg += f' | <a href="{url}"> Index URL</a>'
-            msg += '\n'
-        return msg
