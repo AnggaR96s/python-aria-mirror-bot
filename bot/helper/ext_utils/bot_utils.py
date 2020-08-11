@@ -90,21 +90,38 @@ def get_progress_bar_string(status):
 
 def get_readable_message():
     with download_dict_lock:
+        dlspeed_bytes = 0
+        uldl_bytes = 0
         msg = ""
         for download in list(download_dict.values()):
-            msg += f"<b>FileName :</b> <i>{download.name()}</i> \n\n<b>Status : </b> "
-            msg += download.status()
+            speedy = download.speed()
+            msg += f"<b>Filename :</b> <code>{download.name()}</code>"
+            msg += f"\n<b>Status :</b> <i>{download.status()}</i>"
             if download.status() != MirrorStatus.STATUS_ARCHIVING and download.status() != MirrorStatus.STATUS_EXTRACTING:
-                msg += f"\n\n<code>{get_progress_bar_string(download)} {download.progress()}</code>" \
-                       f"\n\n<b>Progress :</b> {get_readable_file_size(download.processed_bytes())}" \
-                       f"\n\n<b>Size :</b> {download.size()}" \
-                       f"\n\n<b>Speed :</b> {download.speed()} <b>| ETA :</b> {download.eta()} "
+                msg += f"\n<code>{get_progress_bar_string(download)} {download.progress()}</code>" \
+                       f"\n<b>Downloaded :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}" \
+                       f"\n<b>Speed :</b> {download.speed()}, \n<b>ETA:</b> {download.eta()} "
+                if 'KiB/s' in speedy:
+                    dlspeed_bytes += float(speedy.split('K')[0]) * 1024
+                elif 'MiB/s' in speedy:
+                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
+                # if hasattr(download, 'is_torrent'):
+                try:
+                    msg += f"\n<b>Info :- Seeders:</b> {download.aria_download().num_seeders}" \
+                        f" & <b>Peers :</b> {download.aria_download().connections}"
+                except:
+                    pass
             if download.status() == MirrorStatus.STATUS_DOWNLOADING:
-                if hasattr(download, 'is_torrent'):
-                    msg += f"\n\n<b>Peer :</b> {download.aria_download().connections} " \
-                           f"<b>| Seed :</b> {download.aria_download().num_seeders}"
-                msg += f"\n\n<b>cancel :</b> <code>/cancel {download.gid()}</code>"
+                msg += f"\n<b>GID</b>: <code>{download.gid()}</code>"
+            if download.status() == MirrorStatus.STATUS_UPLOADING:
+                if 'KB/s' in speedy:
+            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
+                elif 'MB/s' in speedy:
+                    uldl_bytes += float(speedy.split('M')[0]) * 1048576
             msg += "\n\n"
+        dlspeed = get_readable_file_size(dlspeed_bytes)
+        ulspeed = get_readable_file_size(uldl_bytes)
+        msg += f"<b>DL:</b>{dlspeed}ps ?? | <b>UL:</b>{ulspeed}ps ??\n"
         return msg
 
 
