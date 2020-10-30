@@ -153,7 +153,7 @@ class GoogleDriveHelper:
         media_body = MediaFileUpload(file_path,
                                      mimetype=mime_type,
                                      resumable=True,
-                                     chunksize=50 * 1024 * 1024)
+                                     chunksize=75 * 1024 * 1024)
 
         # Insert a file
         drive_file = self.__service.files().create(supportsTeamDrives=True,
