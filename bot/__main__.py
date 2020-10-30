@@ -25,6 +25,8 @@ def stats(update, context):
     total = get_readable_file_size(total)
     used = get_readable_file_size(used)
     free = get_readable_file_size(free)
+    sent = get_readable_file_size(psutil.net_io_counters().bytes_sent)
+    recv = get_readable_file_size(psutil.net_io_counters().bytes_recv)
     cpuUsage = psutil.cpu_percent(interval=0.5)
     memory = psutil.virtual_memory().percent
     disk = psutil.disk_usage('/').percent
@@ -32,6 +34,9 @@ def stats(update, context):
             f'<b>Total disk space:</b> {total}\n' \
             f'<b>Used:</b> {used}\n' \
             f'<b>Free:</b> {free}\n' \
+            f'📊<b>Data Usage</b>📊\n' \
+            f'<b>Upload:</b> {sent}\n' \
+            f'<b>Down:</b> {recv}\n\n' \
             f'<b>CPU:</b> {cpuUsage}%\n' \
             f'<b>RAM:</b> {memory}%\n' \
             f'<b>Disk:</b> {disk}%'
