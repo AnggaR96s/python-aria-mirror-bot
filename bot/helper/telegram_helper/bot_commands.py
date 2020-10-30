@@ -22,5 +22,6 @@ class _BotCommands:
         self.CloneCommand = "clone"
         self.WatchCommand = 'yt'
         self.TarWatchCommand = 'taryt'
+        self.UpdateCommand = "update"
 
 BotCommands = _BotCommands()
