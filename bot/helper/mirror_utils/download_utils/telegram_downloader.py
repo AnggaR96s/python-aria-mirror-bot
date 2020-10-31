@@ -16,6 +16,7 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
 class TelegramDownloadHelper(DownloadHelper):
+
     def __init__(self, listener):
         super().__init__()
         self.__listener = listener
@@ -41,7 +42,8 @@ class TelegramDownloadHelper(DownloadHelper):
 
     def __onDownloadStart(self, name, size, file_id):
         with download_dict_lock:
-            download_dict[self.__listener.uid] = TelegramDownloadStatus(self, self.__listener)
+            download_dict[self.__listener.uid] = TelegramDownloadStatus(
+                self, self.__listener)
         with global_lock:
             GLOBAL_GID.add(file_id)
         with self.__resource_lock:
@@ -76,8 +78,8 @@ class TelegramDownloadHelper(DownloadHelper):
         self.__listener.onDownloadComplete()
 
     def __download(self, message, path):
-        download = self.__user_bot.download_media(message,
-                                                  progress=self.__onDownloadProgress, file_name=path)
+        download = self.__user_bot.download_media(
+            message, progress=self.__onDownloadProgress, file_name=path)
         if download is not None:
             self.__onDownloadComplete()
         else:
@@ -85,7 +87,8 @@ class TelegramDownloadHelper(DownloadHelper):
                 self.__onDownloadError('Internal error occurred')
 
     def add_download(self, message, path):
-        _message = self.__user_bot.get_messages(message.chat.id, message.message_id)
+        _message = self.__user_bot.get_messages(message.chat.id,
+                                                message.message_id)
         media = None
         media_array = [_message.document, _message.video, _message.audio]
         for i in media_array:
@@ -98,9 +101,12 @@ class TelegramDownloadHelper(DownloadHelper):
                 download = media.file_id not in GLOBAL_GID
 
             if download:
-                self.__onDownloadStart(media.file_name, media.file_size, media.file_id)
-                LOGGER.info(f'Downloading telegram file with id: {media.file_id}')
-                threading.Thread(target=self.__download, args=(_message, path)).start()
+                self.__onDownloadStart(media.file_name, media.file_size,
+                                       media.file_id)
+                LOGGER.info(
+                    f'Downloading telegram file with id: {media.file_id}')
+                threading.Thread(target=self.__download,
+                                 args=(_message, path)).start()
             else:
                 self.__onDownloadError('File already being downloaded!')
         else:

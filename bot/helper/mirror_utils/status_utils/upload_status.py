@@ -4,6 +4,7 @@ from bot import DOWNLOAD_DIR
 
 
 class UploadStatus(Status):
+
     def __init__(self, obj, size, listener):
         self.obj = obj
         self.__size = size

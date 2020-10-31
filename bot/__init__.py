@@ -22,9 +22,11 @@ if os.path.exists('log.txt'):
     with open('log.txt', 'r+') as f:
         f.truncate(0)
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    handlers=[logging.FileHandler('log.txt'), logging.StreamHandler()],
-                    level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[logging.FileHandler('log.txt'),
+              logging.StreamHandler()],
+    level=logging.INFO)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -35,6 +37,7 @@ Interval = []
 
 def getConfig(name: str):
     return os.environ[name]
+
 
 def mktable():
     try:
@@ -48,6 +51,7 @@ def mktable():
         LOGGER.error(e)
         exit(1)
 
+
 try:
     if bool(getConfig('_____REMOVE_THIS_LINE_____')):
         logging.error('The README.md file there to be read! Exiting now!')
@@ -55,13 +59,11 @@ try:
 except KeyError:
     pass
 
-aria2 = aria2p.API(
-    aria2p.Client(
-        host="http://localhost",
-        port=6800,
-        secret="",
-    )
-)
+aria2 = aria2p.API(aria2p.Client(
+    host="http://localhost",
+    port=6800,
+    secret="",
+))
 
 DOWNLOAD_DIR = None
 BOT_TOKEN = None
@@ -86,9 +88,11 @@ try:
     DOWNLOAD_DIR = getConfig('DOWNLOAD_DIR')
     if DOWNLOAD_DIR[-1] != '/' or DOWNLOAD_DIR[-1] != '\\':
         DOWNLOAD_DIR = DOWNLOAD_DIR + '/'
-    DOWNLOAD_STATUS_UPDATE_INTERVAL = int(getConfig('DOWNLOAD_STATUS_UPDATE_INTERVAL'))
+    DOWNLOAD_STATUS_UPDATE_INTERVAL = int(
+        getConfig('DOWNLOAD_STATUS_UPDATE_INTERVAL'))
     OWNER_ID = int(getConfig('OWNER_ID'))
-    AUTO_DELETE_MESSAGE_DURATION = int(getConfig('AUTO_DELETE_MESSAGE_DURATION'))
+    AUTO_DELETE_MESSAGE_DURATION = int(
+        getConfig('AUTO_DELETE_MESSAGE_DURATION'))
     USER_SESSION_STRING = getConfig('USER_SESSION_STRING')
     TELEGRAM_API = getConfig('TELEGRAM_API')
     TELEGRAM_HASH = getConfig('TELEGRAM_HASH')
@@ -114,7 +118,7 @@ except Error as e:
         exit(1)
 finally:
     cur.close()
-    conn.close()     
+    conn.close()
 
 try:
     MEGA_API_KEY = getConfig('MEGA_API_KEY')
@@ -205,6 +209,6 @@ except KeyError:
     SHORTENER = None
     SHORTENER_API = None
 
-updater = tg.Updater(token=BOT_TOKEN,use_context=True)
+updater = tg.Updater(token=BOT_TOKEN, use_context=True)
 bot = updater.bot
 dispatcher = updater.dispatcher

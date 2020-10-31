@@ -1,4 +1,5 @@
 class MirrorListeners:
+
     def __init__(self, context, update):
         self.bot = context
         self.update = update
@@ -10,7 +11,7 @@ class MirrorListeners:
 
     def onDownloadProgress(self):
         raise NotImplementedError
-    
+
     def onDownloadComplete(self):
         raise NotImplementedError
 

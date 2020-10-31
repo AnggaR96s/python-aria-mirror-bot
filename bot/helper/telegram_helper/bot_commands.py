@@ -1,4 +1,5 @@
 class _BotCommands:
+
     def __init__(self):
         self.StartCommand = 'start'
         self.MirrorCommand = 'mir'
@@ -23,5 +24,6 @@ class _BotCommands:
         self.WatchCommand = 'yt'
         self.TarWatchCommand = 'taryt'
         self.UpdateCommand = "update"
+
 
 BotCommands = _BotCommands()

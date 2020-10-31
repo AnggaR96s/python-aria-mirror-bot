@@ -3,6 +3,7 @@ from bot.helper.ext_utils.bot_utils import get_readable_file_size, MirrorStatus
 
 
 class ExtractStatus(Status):
+
     def __init__(self, name, path, size):
         self.__name = name
         self.__path = path

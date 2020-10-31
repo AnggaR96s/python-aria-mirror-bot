@@ -14,7 +14,9 @@ def _watch(bot: Bot, update: Update, args: list, isTar=False):
     try:
         link = args[0]
     except IndexError:
-        sendMessage(f'/{BotCommands.WatchCommand} [yt_dl supported link] to mirror with youtube_dl', bot, update)
+        sendMessage(
+            f'/{BotCommands.WatchCommand} [yt_dl supported link] to mirror with youtube_dl',
+            bot, update)
         return
     reply_to = update.message.reply_to_message
     if reply_to is not None:
@@ -24,10 +26,12 @@ def _watch(bot: Bot, update: Update, args: list, isTar=False):
 
     listener = MirrorListener(bot, update, isTar, tag)
     ydl = YoutubeDLHelper(listener)
-    threading.Thread(target=ydl.add_download,args=(link, f'{DOWNLOAD_DIR}{listener.uid}')).start()
+    threading.Thread(target=ydl.add_download,
+                     args=(link, f'{DOWNLOAD_DIR}{listener.uid}')).start()
     sendStatusMessage(update, bot)
     if len(Interval) == 0:
-        Interval.append(setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
+        Interval.append(
+            setInterval(DOWNLOAD_STATUS_UPDATE_INTERVAL, update_all_messages))
 
 
 @run_async
@@ -39,11 +43,15 @@ def watch(update, context):
     _watch(context.bot, update, context.args)
 
 
-mirror_handler = CommandHandler(BotCommands.WatchCommand, watch,
+mirror_handler = CommandHandler(BotCommands.WatchCommand,
+                                watch,
                                 pass_args=True,
-                                filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
-tar_mirror_handler = CommandHandler(BotCommands.TarWatchCommand, watchTar,
+                                filters=CustomFilters.authorized_chat |
+                                CustomFilters.authorized_user)
+tar_mirror_handler = CommandHandler(BotCommands.TarWatchCommand,
+                                    watchTar,
                                     pass_args=True,
-                                    filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
+                                    filters=CustomFilters.authorized_chat |
+                                    CustomFilters.authorized_user)
 dispatcher.add_handler(mirror_handler)
 dispatcher.add_handler(tar_mirror_handler)

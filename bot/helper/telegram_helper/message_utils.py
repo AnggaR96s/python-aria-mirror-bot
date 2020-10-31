@@ -8,28 +8,35 @@ from bot.helper.ext_utils.bot_utils import get_readable_message, get_readable_fi
 from telegram.error import TimedOut, BadRequest
 from telegram import InlineKeyboardMarkup
 
+
 def sendMessage(text: str, bot, update: Update):
     try:
         return bot.send_message(update.message.chat_id,
-                            reply_to_message_id=update.message.message_id,
-                            text=text, parse_mode='HTMl')
+                                reply_to_message_id=update.message.message_id,
+                                text=text,
+                                parse_mode='HTMl')
     except Exception as e:
         LOGGER.error(str(e))
 
 
-def sendMarkup(text: str, bot, update: Update, reply_markup: InlineKeyboardMarkup):
+def sendMarkup(text: str, bot, update: Update,
+               reply_markup: InlineKeyboardMarkup):
     try:
         return bot.send_message(update.message.chat_id,
-                             reply_to_message_id=update.message.message_id,
-                             text=text, reply_markup=reply_markup, parse_mode='HTMl')
+                                reply_to_message_id=update.message.message_id,
+                                text=text,
+                                reply_markup=reply_markup,
+                                parse_mode='HTMl')
     except Exception as e:
         LOGGER.error(str(e))
 
 
 def editMessage(text: str, message: Message, reply_markup=None):
     try:
-        bot.edit_message_text(text=text, message_id=message.message_id,
-                              chat_id=message.chat.id, reply_markup=reply_markup,
+        bot.edit_message_text(text=text,
+                              message_id=message.message_id,
+                              chat_id=message.chat.id,
+                              reply_markup=reply_markup,
                               parse_mode='HTMl')
     except Exception as e:
         LOGGER.error(str(e))
@@ -45,7 +52,8 @@ def deleteMessage(bot, message: Message):
 
 def sendLogFile(bot, update: Update):
     with open('log.txt', 'rb') as f:
-        bot.send_document(document=f, filename=f.name,
+        bot.send_document(document=f,
+                          filename=f.name,
                           reply_to_message_id=update.message.message_id,
                           chat_id=update.message.chat_id)
 
@@ -85,10 +93,10 @@ def update_all_messages():
                 if 'KiB/s' in speedy:
                     dlspeed_bytes += float(speedy.split('K')[0]) * 1024
                 elif 'MiB/s' in speedy:
-                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
+                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576
             if download.status() == MirrorStatus.STATUS_UPLOADING:
                 if 'KB/s' in speedy:
-            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
+                    uldl_bytes += float(speedy.split('K')[0]) * 1024
                 elif 'MB/s' in speedy:
                     uldl_bytes += float(speedy.split('M')[0]) * 1048576
         dlspeed = get_readable_file_size(dlspeed_bytes)
@@ -96,7 +104,8 @@ def update_all_messages():
         msg += f"\n<b>DL:</b>{dlspeed}ps 🔻| <b>UL:</b>{ulspeed}ps 🔺\n"
     with status_reply_dict_lock:
         for chat_id in list(status_reply_dict.keys()):
-            if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
+            if status_reply_dict[
+                    chat_id] and msg != status_reply_dict[chat_id].text:
                 if len(msg) == 0:
                     msg = "Starting DL"
                 try:
@@ -120,10 +129,10 @@ def sendStatusMessage(msg, bot):
                 if 'KiB/s' in speedy:
                     dlspeed_bytes += float(speedy.split('K')[0]) * 1024
                 elif 'MiB/s' in speedy:
-                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576 
+                    dlspeed_bytes += float(speedy.split('M')[0]) * 1048576
             if download.status() == MirrorStatus.STATUS_UPLOADING:
                 if 'KB/s' in speedy:
-            	    uldl_bytes += float(speedy.split('K')[0]) * 1024
+                    uldl_bytes += float(speedy.split('K')[0]) * 1024
                 elif 'MB/s' in speedy:
                     uldl_bytes += float(speedy.split('M')[0]) * 1048576
         dlspeed = get_readable_file_size(dlspeed_bytes)

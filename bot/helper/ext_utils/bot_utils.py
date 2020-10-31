@@ -29,6 +29,7 @@ SIZE_UNITS = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
 
 
 class setInterval:
+
     def __init__(self, interval, action):
         self.interval = interval
         self.action = action
@@ -94,7 +95,9 @@ def get_readable_message():
         for download in list(download_dict.values()):
             msg += f"<b>Filename :</b> <code>{download.name()}</code>"
             msg += f"\n<b>Status :</b> <i>{download.status()}</i>"
-            if download.status() != MirrorStatus.STATUS_ARCHIVING and download.status() != MirrorStatus.STATUS_EXTRACTING:
+            if download.status(
+            ) != MirrorStatus.STATUS_ARCHIVING and download.status(
+            ) != MirrorStatus.STATUS_EXTRACTING:
                 msg += f"\n<code>{get_progress_bar_string(download)} {download.progress()}</code>" \
                        f"\n<b>Downloaded :</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}" \
                        f"\n<b>Speed :</b> {download.speed()}, \n<b>ETA:</b> {download.eta()} "
@@ -145,6 +148,7 @@ def is_magnet(url: str):
 
 def is_mega_link(url: str):
     return "mega.nz" in url
+
 
 def get_mega_link_type(url: str):
     if "folder" in url:

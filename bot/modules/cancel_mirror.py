@@ -18,7 +18,8 @@ def cancel_mirror(update, context):
         gid = args[1]
         dl = getDownloadByGid(gid)
         if not dl:
-            sendMessage(f"GID: <code>{gid}</code> not found.", context.bot, update)
+            sendMessage(f"GID: <code>{gid}</code> not found.", context.bot,
+                        update)
             return
         with download_dict_lock:
             keys = list(download_dict.keys())
@@ -43,7 +44,8 @@ def cancel_mirror(update, context):
         sendMessage("Upload in Progress, Don't Cancel it.", context.bot, update)
         return
     elif dl.status() == "Archiving":
-        sendMessage("Archival in Progress, Don't Cancel it.", context.bot, update)
+        sendMessage("Archival in Progress, Don't Cancel it.", context.bot,
+                    update)
         return
     else:
         dl.download().cancel_download()
@@ -64,9 +66,13 @@ def cancel_all(update, context):
     sendMessage(f'Cancelled {count} downloads!', context.bot, update)
 
 
-cancel_mirror_handler = CommandHandler(BotCommands.CancelMirror, cancel_mirror,
-                                       filters=(CustomFilters.authorized_chat | CustomFilters.authorized_user) & CustomFilters.mirror_owner_filter)
-cancel_all_handler = CommandHandler(BotCommands.CancelAllCommand, cancel_all,
+cancel_mirror_handler = CommandHandler(
+    BotCommands.CancelMirror,
+    cancel_mirror,
+    filters=(CustomFilters.authorized_chat | CustomFilters.authorized_user) &
+    CustomFilters.mirror_owner_filter)
+cancel_all_handler = CommandHandler(BotCommands.CancelAllCommand,
+                                    cancel_all,
                                     filters=CustomFilters.owner_filter)
 dispatcher.add_handler(cancel_all_handler)
 dispatcher.add_handler(cancel_mirror_handler)

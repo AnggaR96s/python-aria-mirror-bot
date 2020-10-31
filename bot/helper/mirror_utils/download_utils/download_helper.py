@@ -3,11 +3,13 @@ import threading
 
 
 class MethodNotImplementedError(NotImplementedError):
+
     def __init__(self):
         super(self, 'Not implemented method')
 
 
 class DownloadHelper:
+
     def __init__(self):
         self.name = ''  # Name of the download; empty string if no download has been started
         self.size = 0.0  # Size of the download

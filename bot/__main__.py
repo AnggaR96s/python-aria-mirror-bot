@@ -45,13 +45,17 @@ def stats(update, context):
 
 @run_async
 def start(update, context):
-    LOGGER.info('UID: {} - UN: {} - MSG: {}'.format(update.message.chat.id,update.message.chat.username,update.message.text))
+    LOGGER.info('UID: {} - UN: {} - MSG: {}'.format(
+        update.message.chat.id, update.message.chat.username,
+        update.message.text))
     if CustomFilters.authorized_user(update):
-        if update.message.chat.type == "private" :
-            sendMessage(f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>GPXCloud Bot</b>", context.bot, update)
-        else :
+        if update.message.chat.type == "private":
+            sendMessage(
+                f"Hey <b>{update.message.chat.first_name}</b>. Welcome to <b>GPXCloud Bot</b>",
+                context.bot, update)
+        else:
             sendMessage("I'm alive :)", context.bot, update)
-    else :
+    else:
         sendMessage("Oops! not a authorized user.", context.bot, update)
 
 
@@ -72,10 +76,13 @@ def update(update, context):
     try:
         repo = Repo()
     except NoSuchPathError as error:
-        msg.edit_text(f'`directory {error} is not found`', parse_mode="Markdown")
+        msg.edit_text(f'`directory {error} is not found`',
+                      parse_mode="Markdown")
         return
     except InvalidGitRepositoryError as error:
-        msg.edit_text(f'`directory {error} does not seems to be a git repository`', parse_mode="Markdown")
+        msg.edit_text(
+            f'`directory {error} does not seems to be a git repository`',
+            parse_mode="Markdown")
         return
     except GitCommandError as error:
         msg.edit_text(f'`Early failure! {error}`', parse_mode="Markdown")
@@ -98,16 +105,20 @@ def update(update, context):
         msg.edit_text(f"Bot up-to-date with *{branch}*", parse_mode="Markdown")
         return
     if not "now" in text:
-        msg.edit_text(f"*New Update Available*\nCHANGELOG:\n\n{clogs}\n\n\nDo `/update now` to Update BOT.", parse_mode="Markdown")
+        msg.edit_text(
+            f"*New Update Available*\nCHANGELOG:\n\n{clogs}\n\n\nDo `/update now` to Update BOT.",
+            parse_mode="Markdown")
         return
     try:
         remote.pull(branch)
-        msg.edit_text(f"*Successfully Updated BOT, Attempting to restart!*", parse_mode="Markdown")
+        msg.edit_text(f"*Successfully Updated BOT, Attempting to restart!*",
+                      parse_mode="Markdown")
         _restart(msg)
 
     except GitCommandError:
         remote.git.reset('--hard')
-        msg.edit_text(f"*Successfully Updated BOT, Attempting to restart!*", parse_mode="Markdown")
+        msg.edit_text(f"*Successfully Updated BOT, Attempting to restart!*",
+                      parse_mode="Markdown")
         _restart(msg)
 
 
@@ -121,7 +132,8 @@ def _restart(reply):
 
 @run_async
 def restart(update, context):
-    restart_message = sendMessage("Restarting, Please wait!", context.bot, update)
+    restart_message = sendMessage("Restarting, Please wait!", context.bot,
+                                  update)
     _restart(restart_message)
 
 
@@ -199,17 +211,30 @@ def main():
         remove('restart.pickle')
 
     start_handler = CommandHandler(BotCommands.StartCommand, start)
-    ping_handler = CommandHandler(BotCommands.PingCommand, ping,
-                                  filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
-    restart_handler = CommandHandler(BotCommands.RestartCommand, restart,
-                                     filters=CustomFilters.owner_filter | CustomFilters.sudo_user)
+    ping_handler = CommandHandler(BotCommands.PingCommand,
+                                  ping,
+                                  filters=CustomFilters.authorized_chat |
+                                  CustomFilters.authorized_user)
+    restart_handler = CommandHandler(BotCommands.RestartCommand,
+                                     restart,
+                                     filters=CustomFilters.owner_filter |
+                                     CustomFilters.sudo_user)
     help_handler = CommandHandler(BotCommands.HelpCommand,
-                                  bot_help, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
+                                  bot_help,
+                                  filters=CustomFilters.authorized_chat |
+                                  CustomFilters.authorized_user)
     stats_handler = CommandHandler(BotCommands.StatsCommand,
-                                   stats, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user)
-    log_handler = CommandHandler(BotCommands.LogCommand, log, filters=CustomFilters.owner_filter | CustomFilters.sudo_user)
-    update_handler = CommandHandler(BotCommands.UpdateCommand, update,
-                                   filters=CustomFilters.owner_filter | CustomFilters.sudo_user)
+                                   stats,
+                                   filters=CustomFilters.authorized_chat |
+                                   CustomFilters.authorized_user)
+    log_handler = CommandHandler(BotCommands.LogCommand,
+                                 log,
+                                 filters=CustomFilters.owner_filter |
+                                 CustomFilters.sudo_user)
+    update_handler = CommandHandler(BotCommands.UpdateCommand,
+                                    update,
+                                    filters=CustomFilters.owner_filter |
+                                    CustomFilters.sudo_user)
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(ping_handler)
     dispatcher.add_handler(restart_handler)

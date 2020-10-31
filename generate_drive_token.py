@@ -13,8 +13,8 @@ if os.path.exists(__G_DRIVE_TOKEN_FILE):
             if credentials and credentials.expired and credentials.refresh_token:
                 credentials.refresh(Request())
 else:
-    flow = InstalledAppFlow.from_client_secrets_file(
-        'credentials.json', __OAUTH_SCOPE)
+    flow = InstalledAppFlow.from_client_secrets_file('credentials.json',
+                                                     __OAUTH_SCOPE)
     credentials = flow.run_console(port=0)
 
 # Save the credentials for the next run

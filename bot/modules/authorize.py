@@ -7,8 +7,9 @@ from telegram import Update
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.ext_utils.db_handler import DbManger
 
+
 @run_async
-def authorize(update,context):
+def authorize(update, context):
     reply_message = None
     message_ = None
     reply_message = update.message.reply_to_message
@@ -39,7 +40,7 @@ def authorize(update,context):
 
 
 @run_async
-def unauthorize(update,context):
+def unauthorize(update, context):
     reply_message = None
     message_ = None
     reply_message = update.message.reply_to_message
@@ -69,7 +70,7 @@ def unauthorize(update,context):
 
 
 @run_async
-def addSudo(update,context):
+def addSudo(update, context):
     reply_message = None
     message_ = None
     reply_message = update.message.reply_to_message
@@ -94,11 +95,11 @@ def addSudo(update,context):
 
 
 @run_async
-def removeSudo(update,context):
+def removeSudo(update, context):
     reply_message = None
     message_ = None
     reply_message = update.message.reply_to_message
-    message_ = update.message.text.split(' ') 
+    message_ = update.message.text.split(' ')
     if len(message_) == 2:
         chat_id = int(message_[1])
         if chat_id in SUDO_USERS:
@@ -118,22 +119,32 @@ def removeSudo(update,context):
 
 
 @run_async
-def sendAuthChats(update,context):
+def sendAuthChats(update, context):
     user = sudo = ''
     user += '\n'.join(str(id) for id in AUTHORIZED_CHATS)
     sudo += '\n'.join(str(id) for id in SUDO_USERS)
-    sendMessage(f'<b><u>Authorized Chats</u></b>\n{user}\n<b><u>Sudo Users</u></b>\n{sudo}', context.bot, update)
+    sendMessage(
+        f'<b><u>Authorized Chats</u></b>\n{user}\n<b><u>Sudo Users</u></b>\n{sudo}',
+        context.bot, update)
 
 
-send_auth_handler = CommandHandler(command=BotCommands.AuthorizedUsersCommand, callback=sendAuthChats,
-                                    filters=CustomFilters.owner_filter | CustomFilters.sudo_user)
-authorize_handler = CommandHandler(command=BotCommands.AuthorizeCommand, callback=authorize,
-                                   filters=CustomFilters.owner_filter | CustomFilters.sudo_user)
-unauthorize_handler = CommandHandler(command=BotCommands.UnAuthorizeCommand, callback=unauthorize,
-                                     filters=CustomFilters.owner_filter | CustomFilters.sudo_user)
-addsudo_handler = CommandHandler(command=BotCommands.AddSudoCommand, callback=addSudo,
-                                    filters=CustomFilters.owner_filter)
-removesudo_handler = CommandHandler(command=BotCommands.RmSudoCommand, callback=removeSudo,
+send_auth_handler = CommandHandler(command=BotCommands.AuthorizedUsersCommand,
+                                   callback=sendAuthChats,
+                                   filters=CustomFilters.owner_filter |
+                                   CustomFilters.sudo_user)
+authorize_handler = CommandHandler(command=BotCommands.AuthorizeCommand,
+                                   callback=authorize,
+                                   filters=CustomFilters.owner_filter |
+                                   CustomFilters.sudo_user)
+unauthorize_handler = CommandHandler(command=BotCommands.UnAuthorizeCommand,
+                                     callback=unauthorize,
+                                     filters=CustomFilters.owner_filter |
+                                     CustomFilters.sudo_user)
+addsudo_handler = CommandHandler(command=BotCommands.AddSudoCommand,
+                                 callback=addSudo,
+                                 filters=CustomFilters.owner_filter)
+removesudo_handler = CommandHandler(command=BotCommands.RmSudoCommand,
+                                    callback=removeSudo,
                                     filters=CustomFilters.owner_filter)
 
 dispatcher.add_handler(send_auth_handler)
@@ -141,4 +152,3 @@ dispatcher.add_handler(authorize_handler)
 dispatcher.add_handler(unauthorize_handler)
 dispatcher.add_handler(addsudo_handler)
 dispatcher.add_handler(removesudo_handler)
-

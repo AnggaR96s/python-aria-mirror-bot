@@ -28,7 +28,9 @@ def clean_all():
 
 def exit_clean_up(signal, frame):
     try:
-        LOGGER.info("Please wait, while we clean up the downloads and stop running downloads")
+        LOGGER.info(
+            "Please wait, while we clean up the downloads and stop running downloads"
+        )
         clean_all()
         sys.exit(0)
     except KeyboardInterrupt:
@@ -131,7 +133,8 @@ def get_base_name(orig_path: str):
     elif orig_path.endswith(".xar"):
         return orig_path.replace(".xar", "")
     else:
-        raise NotSupportedExtractionArchive('File format not supported for extraction')
+        raise NotSupportedExtractionArchive(
+            'File format not supported for extraction')
 
 
 def get_mime_type(file_path):

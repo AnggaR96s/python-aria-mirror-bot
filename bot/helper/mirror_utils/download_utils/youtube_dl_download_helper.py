@@ -11,6 +11,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class MyLogger:
+
     def __init__(self, obj):
         self.obj = obj
 
@@ -31,6 +32,7 @@ class MyLogger:
 
 
 class YoutubeDLHelper(DownloadHelper):
+
     def __init__(self, listener):
         super().__init__()
         self.__name = ""
@@ -78,7 +80,8 @@ class YoutubeDLHelper(DownloadHelper):
                     self.last_downloaded = d['total_bytes'] * progress
                     self.downloaded_bytes += chunk_size
                     try:
-                        self.progress = (self.downloaded_bytes / self.size) * 100
+                        self.progress = (self.downloaded_bytes /
+                                         self.size) * 100
                     except ZeroDivisionError:
                         pass
                 else:
@@ -87,7 +90,8 @@ class YoutubeDLHelper(DownloadHelper):
 
     def __onDownloadStart(self):
         with download_dict_lock:
-            download_dict[self.__listener.uid] = YoutubeDLDownloadStatus(self, self.__listener)
+            download_dict[self.__listener.uid] = YoutubeDLDownloadStatus(
+                self, self.__listener)
 
     def __onDownloadComplete(self):
         self.__listener.onDownloadComplete()
