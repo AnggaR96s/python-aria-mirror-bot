@@ -102,19 +102,15 @@ def removeSudo(update, context):
     message_ = update.message.text.split(' ')
     if len(message_) == 2:
         chat_id = int(message_[1])
-        if chat_id in SUDO_USERS:
-            msg = DbManger().db_rmsudo(chat_id)
-        else:
-            msg = 'Not a Sudo'
+        msg = DbManger().db_rmsudo(
+            chat_id) if chat_id in SUDO_USERS else 'Not a Sudo'
     else:
         if reply_message is None:
             msg = "Give ID or Reply To message of whom you want to remove from Sudo"
         else:
             user_id = reply_message.from_user.id
-            if user_id in SUDO_USERS:
-                msg = DbManger().db_rmsudo(user_id)
-            else:
-                msg = 'Not a Sudo'
+            msg = DbManger().db_rmsudo(
+                user_id) if user_id in SUDO_USERS else 'Not a Sudo'
     sendMessage(msg, context.bot, update)
 
 

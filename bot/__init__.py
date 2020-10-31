@@ -175,10 +175,7 @@ except KeyError:
     STOP_DUPLICATE_MIRROR = False
 try:
     IS_TEAM_DRIVE = getConfig('IS_TEAM_DRIVE')
-    if IS_TEAM_DRIVE.lower() == 'true':
-        IS_TEAM_DRIVE = True
-    else:
-        IS_TEAM_DRIVE = False
+    IS_TEAM_DRIVE = IS_TEAM_DRIVE.lower() == 'true'
 except KeyError:
     IS_TEAM_DRIVE = False
 
@@ -193,10 +190,7 @@ except KeyError:
 
 try:
     BLOCK_MEGA_LINKS = getConfig('BLOCK_MEGA_LINKS')
-    if BLOCK_MEGA_LINKS.lower() == 'true':
-        BLOCK_MEGA_LINKS = True
-    else:
-        BLOCK_MEGA_LINKS = False
+    BLOCK_MEGA_LINKS = BLOCK_MEGA_LINKS.lower() == 'true'
 except KeyError:
     BLOCK_MEGA_LINKS = False
 

@@ -27,7 +27,7 @@ sleep_time = 30
 # Create count SAs in project
 def _create_accounts(service, project, count):
     batch = service.new_batch_http_request(callback=_def_batch_resp)
-    for i in range(count):
+    for _ in range(count):
         aid = _generate_id('mfc-')
         batch.add(service.projects().serviceAccounts().create(
             name='projects/' + project,
@@ -362,23 +362,18 @@ if __name__ == '__main__':
         if len(options) < 1:
             exit(-1)
         else:
-            i = 0
             print('Select a credentials file below.')
             inp_options = [str(i)
                            for i in list(range(1,
                                                len(options) + 1))] + options
-            while i < len(options):
+            for i in range(len(options)):
                 print('  %d) %s' % (i + 1, options[i]))
-                i += 1
             inp = None
             while True:
                 inp = input('> ')
                 if inp in inp_options:
                     break
-            if inp in options:
-                args.credentials = inp
-            else:
-                args.credentials = options[int(inp) - 1]
+            args.credentials = inp if inp in options else options[int(inp) - 1]
             print(
                 'Use --credentials %s next time to use this credentials file.' %
                 args.credentials)

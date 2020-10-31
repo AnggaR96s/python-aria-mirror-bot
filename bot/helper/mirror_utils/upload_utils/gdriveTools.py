@@ -186,7 +186,9 @@ class GoogleDriveHelper:
                                 '').startswith('application/json'):
                     reason = json.loads(
                         err.content).get('error').get('errors')[0].get('reason')
-                    if reason == 'userRateLimitExceeded' or reason == 'dailyLimitExceeded':
+                    if reason in [
+                            'userRateLimitExceeded', 'dailyLimitExceeded'
+                    ]:
                         if USE_SERVICE_ACCOUNTS:
                             self.switchServiceAccount()
                             LOGGER.info(f"Got: {reason}, Trying Again.")
@@ -289,15 +291,14 @@ class GoogleDriveHelper:
         body = {'parents': [dest_id]}
 
         try:
-            res = self.__service.files().copy(supportsAllDrives=True,
-                                              fileId=file_id,
-                                              body=body).execute()
-            return res
+            return self.__service.files().copy(supportsAllDrives=True,
+                                               fileId=file_id,
+                                               body=body).execute()
         except HttpError as err:
             if err.resp.get('content-type', '').startswith('application/json'):
                 reason = json.loads(
                     err.content).get('error').get('errors')[0].get('reason')
-                if reason == 'userRateLimitExceeded' or reason == 'dailyLimitExceeded':
+                if reason in ['userRateLimitExceeded', 'dailyLimitExceeded']:
                     if USE_SERVICE_ACCOUNTS:
                         self.switchServiceAccount()
                         LOGGER.info(f"Got: {reason}, Trying Again.")
@@ -374,15 +375,6 @@ class GoogleDriveHelper:
                         buttons.buildbutton("💥Index Link💥", siurl)
                     else:
                         buttons.buildbutton("💥Index Link💥", url)
-                if BUTTON_THREE_NAME is not None and BUTTON_THREE_URL is not None:
-                    buttons.buildbutton(f"{BUTTON_THREE_NAME}",
-                                        f"{BUTTON_THREE_URL}")
-                if BUTTON_FOUR_NAME is not None and BUTTON_FOUR_URL is not None:
-                    buttons.buildbutton(f"{BUTTON_FOUR_NAME}",
-                                        f"{BUTTON_FOUR_URL}")
-                if BUTTON_FIVE_NAME is not None and BUTTON_FIVE_URL is not None:
-                    buttons.buildbutton(f"{BUTTON_FIVE_NAME}",
-                                        f"{BUTTON_FIVE_URL}")
             else:
                 file = self.copyFile(meta.get('id'), parent_id)
                 msg += f'<b>Filename : </b><code>{file.get("name")}</code>'
@@ -409,15 +401,13 @@ class GoogleDriveHelper:
                         buttons.buildbutton("💥Index Link💥", siurl)
                     else:
                         buttons.buildbutton("💥Index Link💥", url)
-                if BUTTON_THREE_NAME is not None and BUTTON_THREE_URL is not None:
-                    buttons.buildbutton(f"{BUTTON_THREE_NAME}",
-                                        f"{BUTTON_THREE_URL}")
-                if BUTTON_FOUR_NAME is not None and BUTTON_FOUR_URL is not None:
-                    buttons.buildbutton(f"{BUTTON_FOUR_NAME}",
-                                        f"{BUTTON_FOUR_URL}")
-                if BUTTON_FIVE_NAME is not None and BUTTON_FIVE_URL is not None:
-                    buttons.buildbutton(f"{BUTTON_FIVE_NAME}",
-                                        f"{BUTTON_FIVE_URL}")
+            if BUTTON_THREE_NAME is not None and BUTTON_THREE_URL is not None:
+                buttons.buildbutton(f"{BUTTON_THREE_NAME}",
+                                    f"{BUTTON_THREE_URL}")
+            if BUTTON_FOUR_NAME is not None and BUTTON_FOUR_URL is not None:
+                buttons.buildbutton(f"{BUTTON_FOUR_NAME}", f"{BUTTON_FOUR_URL}")
+            if BUTTON_FIVE_NAME is not None and BUTTON_FIVE_URL is not None:
+                buttons.buildbutton(f"{BUTTON_FIVE_NAME}", f"{BUTTON_FIVE_URL}")
         except Exception as err:
             if isinstance(err, RetryError):
                 LOGGER.info(
@@ -632,7 +622,7 @@ class GoogleDriveHelper:
             if msg != '':
                 self.telegraph_content.append(msg)
 
-            if len(self.telegraph_content) == 0:
+            if not self.telegraph_content:
                 return "No Result Found :(", None
 
             for content in self.telegraph_content:

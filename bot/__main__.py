@@ -104,7 +104,7 @@ def update(update, context):
     if not clogs:
         msg.edit_text(f"Bot up-to-date with *{branch}*", parse_mode="Markdown")
         return
-    if not "now" in text:
+    if "now" not in text:
         msg.edit_text(
             f"*New Update Available*\nCHANGELOG:\n\n{clogs}\n\n\nDo `/update now` to Update BOT.",
             parse_mode="Markdown")
