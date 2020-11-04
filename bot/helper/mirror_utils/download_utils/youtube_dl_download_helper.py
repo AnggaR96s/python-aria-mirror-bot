@@ -42,8 +42,7 @@ class YoutubeDLHelper(DownloadHelper):
         self.opts = {
             'progress_hooks': [self.__onDownloadProgress],
             'logger': MyLogger(self),
-            'usenetrc': True,
-            'format': "best/bestvideo+bestaudio"
+            'usenetrc': True
         }
         self.__download_speed = 0
         self.download_speed_readable = ''
@@ -106,6 +105,9 @@ class YoutubeDLHelper(DownloadHelper):
             try:
                 result = ydl.extract_info(link, download=False)
                 name = ydl.prepare_filename(result)
+                # noobway hack for changing extension after converting to mp3
+                if qual == "audio":
+                  name = name.replace(".mp4", ".mp3").replace(".webm", ".mp3")
             except DownloadError as e:
                 self.onDownloadError(str(e))
                 return
@@ -141,11 +143,16 @@ class YoutubeDLHelper(DownloadHelper):
             LOGGER.info("Download Cancelled by User!")
             self.onDownloadError("Download Cancelled by User!")
 
-    def add_download(self, link, path):
+    def add_download(self, link, path, qual):
         self.__onDownloadStart()
-        self.extractMetaData(link)
+        self.extractMetaData(link, qual)
         LOGGER.info(f"Downloading with YT-DL: {link}")
         self.__gid = f"{self.vid_id}{self.__listener.uid}"
+        if qual == "audio":
+          self.opts['format'] = 'bestaudio/best'
+          self.opts['postprocessors'] = [{'key': 'FFmpegExtractAudio','preferredcodec': 'mp3','preferredquality': '192',}]
+        else:
+          self.opts['format'] = qual
         if not self.is_playlist:
             self.opts['outtmpl'] = f"{path}/{self.name}"
         else:

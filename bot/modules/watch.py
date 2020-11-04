@@ -14,10 +14,16 @@ def _watch(bot: Bot, update: Update, args: list, isTar=False):
     try:
         link = args[0]
     except IndexError:
-        sendMessage(
-            f'/{BotCommands.WatchCommand} [yt_dl supported link] to mirror with youtube_dl',
-            bot, update)
+        msg = f"/{BotCommands.WatchCommand} [yt_dl supported link] [quality] to mirror with youtube_dl.\n\n"
+        msg += "Example of quality :- audio, 144, 360, 720, 1080.\nNote :- Quality is optional"
+        sendMessage(msg, bot, update)
         return
+    try:
+      qual = args[1]
+      if qual != "audio":
+        qual = f'bestvideo[height<={qual}]+bestaudio/best[height<={qual}]'
+    except IndexError:
+      qual = "bestvideo+bestaudio/best"
     reply_to = update.message.reply_to_message
     tag = reply_to.from_user.username if reply_to is not None else None
     listener = MirrorListener(bot, update, isTar, tag)
