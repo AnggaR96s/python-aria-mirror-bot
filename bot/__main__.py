@@ -1,4 +1,7 @@
-import shutil, psutil import signal import pickle
+import pickle
+import psutil
+import shutil
+import signal
 
 from os import execl, path, remove
 from sys import executable
